@@ -18,7 +18,7 @@ const eventsSchema = new mongoose.Schema({
     required: true,
   },
   experience: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Experience",
   },
 });

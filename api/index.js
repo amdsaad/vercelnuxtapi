@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const User = require("./models/user");
 const Experience = require("./models/Experience");
-const ExperienceEvents = require('./models/Events');
+const Event = require("./models/Events");
 var cors = require("cors");
 
 app.use(bodyParser.json());
@@ -117,15 +117,24 @@ app.post("/api/experience/:id/event", async (req, res) => {
     endRecur: req.body.endRecur,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
-    experience: req.body.experience_id,
+    experience: req.body.experience,
   });
-  console.log(event)
-  // try {
-  //   const newExperience = await experience.save();
-  //   res.status(201).json(newExperience);
-  // } catch (error) {
-  //   error.status(400).json({ message: error.message });
-  // }
+  try {
+    const newEvent = await event.save();
+    console.log(newEvent);
+    res.status(201).json(newEvent);
+  } catch (error) {
+    error.status(400).json({ message: error.message });
+  }
+});
+// get events of Experience
+app.get("/api/experience/:id/events", async (req, res) => {
+  try {
+    const events = await Event.find({ experience: req.params.id });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 module.exports = app;

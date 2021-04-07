@@ -65,7 +65,8 @@ export default {
   },
   methods: {
     handleDateSelect(eventClickInfo) {
-      console.log(eventClickInfo.event.extendedProps);
+      // console.log(eventClickInfo.event.extendedProps);
+      console.log(eventClickInfo);
     },
     getDates(startDate, endDate) {
       let dates = [];
@@ -82,7 +83,7 @@ export default {
         new Date(this.start_date),
         new Date(this.end_date)
       );
-      dates.forEach((date) => {
+      dates.forEach(async (date) => {
         let endRecur = format(addDays(new Date(date), 1), "yyyy-MM-dd");
         let startRecur = format(new Date(date), "yyyy-MM-dd");
         let data = {
@@ -90,8 +91,17 @@ export default {
           endRecur,
           startTime: this.start_time,
           endTime: this.end_time,
+          experience: this.experience._id,
         };
         console.log(data);
+        try {
+          await axios.post(`/api/experience/${this.experience._id}/event`, {
+            ...data,
+          });
+        } catch (error) {
+          console.error(error);
+        }
+
         this.calendarOptions.events.push(data);
       });
     },
@@ -101,6 +111,15 @@ export default {
     try {
       const experience_data = await axios.get(`/api/experience/${uid}`);
       this.experience = experience_data.data;
+      console.log(this.experience);
+    } catch (error) {
+      console.error(error);
+    }
+    try {
+      const experience_events = await axios.get(
+        `/api/experience/${this.experience._id}/events`
+      );
+      this.calendarOptions.events = experience_events.data;
     } catch (error) {
       console.error(error);
     }
